@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Вход · Neorise</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container" style="max-width:400px; margin:80px auto;">
+        <div class="card" style="border-color:#b44dff; box-shadow:0 0 30px rgba(180,77,255,0.2);">
+            <h1 class="neon-text" style="text-align:center;">Neorise</h1>
+            <h2 style="text-align:center; color:#c0c0c0;">Вход</h2>
+            <form id="loginForm">
+                <div class="form-group">
+                    <label>Имя пользователя</label>
+                    <input type="text" id="loginUsername" placeholder="Ваше имя" required>
+                </div>
+                <div class="form-group">
+                    <label>Пароль</label>
+                    <input type="password" id="loginPassword" placeholder="Пароль" required>
+                </div>
+                <div id="twoFactorSection" style="display:none;">
+                    <div class="form-group">
+                        <label>Код 2FA</label>
+                        <input type="text" id="twoFactorCode" placeholder="6-значный код" maxlength="6">
+                        <p style="color:#888; font-size:12px;">Введите код из приложения-аутентификатора</p>
+                    </div>
+                </div>
+                <button type="submit" class="btn-primary" style="width:100%;">Войти</button>
+                <p id="loginMessage" style="text-align:center; margin-top:10px;"></p>
+                <p style="text-align:center; margin-top:10px;">Нет аккаунта? <a href="register.html" style="color:#b44dff;">Зарегистрироваться</a></p>
+            </form>
+        </div>
+    </div>
+    <script src="auth.js"></script>
+    <script>
+        document.getElementById('loginForm').onsubmit = function(e) {
+            e.preventDefault();
+            const username = document.getElementById('loginUsername').value.trim();
+            const password = document.getElementById('loginPassword').value;
+            const twoFactorCode = document.getElementById('twoFactorCode').value.trim();
+            const msg = document.getElementById('loginMessage');
+            const twoFactorSection = document.getElementById('twoFactorSection');
+            
+            const users = getUsers();
+            const user = users.find(u => u.username === username);
+            
+            if (!user) {
+                msg.style.color = '#ff4444';
+                msg.textContent = '❌ Пользователь не найден';
+                return;
+            }
+            
+            if (user.twoFactorEnabled && !twoFactorCode) {
+                twoFactorSection.style.display = 'block';
+                msg.style.color = '#b44dff';
+                msg.textContent = '🔐 Введите код 2FA';
+                return;
+            }
+            
+            const result = loginUser(username, password, twoFactorCode);
+            if (result.success) {
+                msg.style.color = '#39ff14';
+                msg.textContent = '✅ Добро пожаловать!';
+                setTimeout(() => window.location.href = 'index.html', 1000);
+            } else {
+                msg.style.color = '#ff4444';
+                msg.textContent = '❌ ' + result.message;
+            }
+        };
+        
+        document.getElementById('loginUsername').addEventListener('input', function() {
+            document.getElementById('twoFactorSection').style.display = 'none';
+            document.getElementById('loginMessage').textContent = '';
+        });
+    </script>
+</body>
+</html>

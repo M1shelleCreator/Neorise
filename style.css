@@ -1,0 +1,484 @@
+/* ===== ГЛОБАЛЬНЫЕ СТИЛИ ===== */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, sans-serif;
+    background: #0a0a0a;
+    color: #c0c0c0;
+    min-height: 100vh;
+    padding: 20px;
+}
+
+.container {
+    max-width: 1100px;
+    margin: 0 auto;
+}
+
+.neon-text {
+    color: #b44dff;
+    text-shadow: 0 0 5px #b44dff, 0 0 10px #b44dff, 0 0 20px #b44dff, 0 0 40px #7b2fbe;
+}
+
+/* ===== ШАПКА ===== */
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 25px;
+    background: #111;
+    border-radius: 15px;
+    border: 1px solid #b44dff;
+    box-shadow: 0 0 20px rgba(180, 77, 255, 0.2);
+    margin-bottom: 30px;
+}
+
+.logo {
+    font-size: 28px;
+    font-weight: bold;
+    color: #b44dff;
+    text-shadow: 0 0 10px #b44dff, 0 0 20px #7b2fbe;
+}
+
+.header-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.profile-btn-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: #1a1a1a;
+    padding: 5px 15px 5px 5px;
+    border-radius: 30px;
+    border: 1px solid #b44dff;
+    cursor: pointer;
+    color: #b44dff;
+}
+
+.profile-btn-header img {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    border: 2px solid #b44dff;
+}
+
+.notif-btn {
+    position: relative;
+    background: transparent;
+    border: none;
+    color: #c0c0c0;
+    font-size: 24px;
+    cursor: pointer;
+}
+
+.notif-badge {
+    position: absolute;
+    top: -5px;
+    right: -8px;
+    background: #ff4444;
+    color: #fff;
+    font-size: 10px;
+    border-radius: 50%;
+    padding: 2px 6px;
+    font-weight: bold;
+    animation: pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.2); }
+}
+
+/* ===== ОСНОВНОЙ КОНТЕНТ ===== */
+.main-content {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 60vh;
+}
+
+.content-section {
+    background: #111;
+    border-radius: 15px;
+    padding: 40px;
+    border: 1px solid #222;
+    text-align: center;
+    max-width: 600px;
+    width: 100%;
+}
+
+.content-section h1 {
+    color: #b44dff;
+    text-shadow: 0 0 10px #b44dff;
+    margin-bottom: 15px;
+    font-size: 28px;
+}
+
+/* ===== КНОПКА ЛАТЕРЕИ ===== */
+.lottery-btn {
+    background: linear-gradient(135deg, #b44dff, #7b2fbe);
+    color: #0a0a0a;
+    border: none;
+    padding: 16px 40px;
+    border-radius: 30px;
+    font-size: 22px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s;
+    box-shadow: 0 0 30px rgba(180, 77, 255, 0.3);
+    margin: 20px 0;
+}
+
+.lottery-btn:hover {
+    transform: scale(1.05);
+    box-shadow: 0 0 50px rgba(180, 77, 255, 0.5);
+}
+
+.lottery-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
+}
+
+/* ===== КАРТЫ СТИРАНИЯ ===== */
+.lottery-modal {
+    max-width: 500px;
+}
+
+.scratch-card {
+    width: 100px;
+    height: 130px;
+    border-radius: 12px;
+    position: relative;
+    cursor: pointer;
+    overflow: hidden;
+    border: 2px solid rgba(180, 77, 255, 0.3);
+    transition: all 0.3s;
+    background: #1a1a1a;
+}
+
+.scratch-card:hover {
+    border-color: #b44dff;
+    box-shadow: 0 0 20px rgba(180, 77, 255, 0.2);
+}
+
+.scratch-card .scratch-cover {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 32px;
+    font-weight: bold;
+    transition: all 0.4s ease;
+    border-radius: 10px;
+    user-select: none;
+    z-index: 2;
+}
+
+.scratch-card .scratch-cover.silver {
+    background: linear-gradient(145deg, #c0c0c0, #8a8a8a);
+    color: #666;
+    text-shadow: 0 0 10px rgba(255,255,255,0.2);
+}
+
+.scratch-card .scratch-cover.revealed {
+    opacity: 0;
+    pointer-events: none;
+}
+
+.scratch-card .scratch-result {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 36px;
+    font-weight: bold;
+    border-radius: 10px;
+    background: #1a1a1a;
+    z-index: 1;
+}
+
+.scratch-card .scratch-result.luck {
+    color: #ffd700;
+    text-shadow: 0 0 20px #ffd700, 0 0 40px #ffd700;
+}
+
+.scratch-card .scratch-result.lose {
+    color: #ff4444;
+    text-shadow: 0 0 20px #ff4444;
+}
+
+/* ===== МОДАЛЫ ===== */
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.85);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+    animation: fadeIn 0.3s ease;
+}
+
+.modal-content {
+    background: #111;
+    border: 1px solid #b44dff;
+    border-radius: 20px;
+    padding: 30px;
+    max-width: 500px;
+    width: 90%;
+    max-height: 80vh;
+    overflow-y: auto;
+}
+
+.modal-content h3 {
+    color: #b44dff;
+    margin-top: 0;
+}
+
+.modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 15px;
+    flex-wrap: wrap;
+}
+
+/* ===== КНОПКИ ===== */
+.btn-primary {
+    background: #b44dff;
+    color: #0a0a0a;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 25px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.btn-primary:hover {
+    box-shadow: 0 0 20px #b44dff, 0 0 40px #7b2fbe;
+}
+
+.btn-secondary {
+    background: transparent;
+    color: #b44dff;
+    border: 1px solid #b44dff;
+    padding: 8px 16px;
+    border-radius: 25px;
+    cursor: pointer;
+}
+
+.btn-danger {
+    background: #ff4444;
+    color: #fff;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 25px;
+    cursor: pointer;
+}
+
+.btn-success {
+    background: #00cc88;
+    color: #0a0a0a;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 25px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+/* ===== УВЕДОМЛЕНИЯ ===== */
+.notif-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+    background: #1a1a1a;
+    border-radius: 10px;
+    margin-bottom: 8px;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.notif-item .notif-text {
+    flex: 1;
+    font-size: 14px;
+    color: #c0c0c0;
+}
+
+.notif-item .notif-actions {
+    display: flex;
+    gap: 5px;
+    flex-wrap: wrap;
+}
+
+/* ===== ЧАТ ===== */
+#chatModal .modal-content {
+    max-height: 95vh;
+    height: 90vh;
+    display: flex;
+    flex-direction: column;
+}
+
+#chatModalMessages {
+    flex: 1;
+    max-height: none !important;
+    min-height: 400px;
+    height: 100%;
+    overflow-y: auto;
+}
+
+#chatModalMessages .msg-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #1a1a1a;
+    padding: 8px 12px;
+    border-radius: 8px;
+    margin-bottom: 4px;
+}
+
+#chatModalMessages .msg-item .msg-text {
+    flex: 1;
+}
+
+#chatModalMessages .msg-item .msg-username {
+    color: #b44dff;
+    font-weight: bold;
+}
+
+#chatModalMessages .msg-item .msg-time {
+    color: #666;
+    font-size: 12px;
+    margin: 0 8px;
+}
+
+#chatModalInput {
+    padding: 12px 15px;
+    font-size: 16px;
+}
+
+#chatModalSend {
+    padding: 12px 25px;
+    font-size: 16px;
+}
+
+#chatModalAdminActions {
+    margin-top: 8px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+}
+
+#chatModalAdminActions button {
+    font-size: 13px;
+    padding: 6px 12px;
+}
+
+/* ===== ПРОФИЛЬ ===== */
+.profile-card {
+    background: #111;
+    border: 1px solid #b44dff;
+    border-radius: 20px;
+    padding: 30px;
+    text-align: center;
+}
+
+.profile-avatar-large {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    border: 4px solid #b44dff;
+    object-fit: cover;
+    margin-bottom: 15px;
+}
+
+.profile-name {
+    font-size: 28px;
+    color: #b44dff;
+    text-shadow: 0 0 10px #b44dff;
+}
+
+.profile-info {
+    margin: 15px 0;
+    color: #c0c0c0;
+}
+
+.profile-actions {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+/* ===== АНИМАЦИИ ===== */
+@keyframes fadeIn {
+    from { opacity: 0; transform: scale(0.95); }
+    to { opacity: 1; transform: scale(1); }
+}
+
+/* ===== АДАПТИВ ===== */
+@media (max-width: 768px) {
+    .header {
+        flex-wrap: wrap;
+        padding: 10px 15px;
+        gap: 8px;
+    }
+    .logo {
+        font-size: 20px;
+    }
+    .header-actions {
+        flex-wrap: wrap;
+        gap: 6px;
+        width: 100%;
+    }
+    .profile-btn-header {
+        padding: 4px 10px 4px 4px;
+        font-size: 13px;
+    }
+    .profile-btn-header img {
+        width: 28px;
+        height: 28px;
+    }
+    .notif-btn {
+        font-size: 20px;
+    }
+    .modal-content {
+        padding: 20px;
+        max-width: 95%;
+        max-height: 90vh;
+        margin: 10px;
+    }
+    .content-section {
+        padding: 25px;
+    }
+    .scratch-card {
+        width: 70px;
+        height: 100px;
+    }
+    .scratch-card .scratch-result {
+        font-size: 24px;
+    }
+    .lottery-btn {
+        padding: 12px 25px;
+        font-size: 18px;
+    }
+}
