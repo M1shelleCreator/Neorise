@@ -30,9 +30,6 @@ function updateUserLastSeen() {
 setInterval(updateUserLastSeen, 15000);
 updateUserLastSeen();
 
-// ============================================================
-// ===== ШАПКА =====
-// ============================================================
 function updateHeader() {
     document.getElementById('headerName').textContent = currentUser.username;
     const avatar = document.getElementById('headerAvatar');
@@ -58,7 +55,7 @@ document.getElementById('profileBtnHeader').onclick = () => window.location.href
 document.getElementById('notifBtn').onclick = openNotifModal;
 
 // ============================================================
-// ===== ЛАТЕРЕЯ =====
+// ===== ЛОТЕРЕЯ (НОВЫЕ ШАНСЫ) =====
 // ============================================================
 let lotteryActive = false;
 let lotteryResults = [];
@@ -75,7 +72,7 @@ function openLottery() {
     const twoHours = 2 * 60 * 60 * 1000;
     
     if (!currentUser.lottery) {
-        currentUser.lottery = { lastTicket: 0, hasTicket: false };
+        currentUser.lottery = { lastTicket: 0, hasTicket: false, luckWins: 0, playerWins: 0 };
     }
     
     if (currentUser.lottery.hasTicket) {
@@ -91,29 +88,31 @@ function openLottery() {
         return;
     }
     
-    // Выдаём билет
     currentUser.lottery.lastTicket = now;
     currentUser.lottery.hasTicket = true;
     updateUserData(currentUser);
     
-    // Генерируем результаты
+    // ===== НОВЫЕ ШАНСЫ =====
+    // Генерируем 3 ячейки
     lotteryResults = [];
-    let luckCount = 0;
     for (let i = 0; i < 3; i++) {
-        const isLuck = Math.random() < 0.01;
-        lotteryResults.push(isLuck ? 'LUCK' : '❌');
-        if (isLuck) luckCount++;
+        const rand = Math.random() * 100;
+        if (rand < 10) {
+            lotteryResults.push('LUCK');      // 10%
+        } else if (rand < 40) {
+            lotteryResults.push('PLAYER');     // 30%
+        } else {
+            lotteryResults.push('❌');         // 60%
+        }
     }
     
     revealedCount = 0;
     lotteryActive = true;
     
-    // Показываем модалку
     document.getElementById('lotteryMessage').textContent = '🎴 Стирайте карты, чтобы открыть результат!';
     document.getElementById('lotteryMessage').style.color = '#888';
     document.getElementById('closeLotteryBtn').style.display = 'none';
     
-    // Сбрасываем карты
     document.querySelectorAll('.scratch-card').forEach((card, index) => {
         const cover = card.querySelector('.scratch-cover');
         const result = card.querySelector('.scratch-result');
@@ -138,30 +137,45 @@ document.querySelectorAll('.scratch-card').forEach(card => {
         const cover = this.querySelector('.scratch-cover');
         const result = this.querySelector('.scratch-result');
         
-        // Показываем результат
         const value = lotteryResults[index];
         cover.className = 'scratch-cover revealed';
         cover.textContent = '';
         
         result.textContent = value;
-        result.className = 'scratch-result ' + (value === 'LUCK' ? 'luck' : 'lose');
+        result.className = 'scratch-result';
+        
+        if (value === 'LUCK') {
+            result.classList.add('luck-rainbow');
+        } else if (value === 'PLAYER') {
+            result.classList.add('player-cyan');
+        } else {
+            result.classList.add('lose-red');
+        }
         
         this.dataset.revealed = 'true';
         revealedCount++;
         
-        // Проверяем, все ли карты открыты
         if (revealedCount === 3) {
             const luckCount = lotteryResults.filter(r => r === 'LUCK').length;
+            const playerCount = lotteryResults.filter(r => r === 'PLAYER').length;
             const message = document.getElementById('lotteryMessage');
             const closeBtn = document.getElementById('closeLotteryBtn');
             
-            if (luckCount >= 2) {
-                // ВЫИГРЫШ
-                message.textContent = '🎉 Вы выиграли роль [LUCK] в Discord сервере NyxonStudio_Official! Ссылка в 📬';
+            // ===== ПРОВЕРКА ВЫИГРЫША =====
+            const winLUCK = luckCount === 3;
+            const winPLAYER = playerCount === 3;
+            
+            if (winLUCK) {
+                // ВЫИГРЫШ LUCK (все 3)
+                message.textContent = '🎉 ВЫ ВЫИГРАЛИ [LUCK]! Ссылка в 📬';
                 message.style.color = '#ffd700';
                 message.style.textShadow = '0 0 20px #ffd700';
                 
-                // Отправляем ссылку в уведомления
+                // Сохраняем статистику
+                if (!currentUser.lottery.luckWins) currentUser.lottery.luckWins = 0;
+                currentUser.lottery.luckWins++;
+                updateUserData(currentUser);
+                
                 if (!currentUser.notifications) currentUser.notifications = [];
                 currentUser.notifications.push({
                     id: 'notif_' + Date.now(),
@@ -172,14 +186,13 @@ document.querySelectorAll('.scratch-card').forEach(card => {
                 updateUserData(currentUser);
                 updateHeader();
                 
-                // Уведомление Михаилу
                 const director = getUsers().find(u => u.role === 'director');
                 if (director) {
                     if (!director.notifications) director.notifications = [];
                     director.notifications.push({
                         id: 'notif_' + Date.now(),
                         type: 'lottery_win',
-                        message: `🎰 Пользователь "${currentUser.username}" выиграл в латерее от Nyxon Studio роль [LUCK]!`,
+                        message: `🎰 Пользователь "${currentUser.username}" выиграл [LUCK]!`,
                         timestamp: Date.now()
                     });
                     let users = getUsers();
@@ -190,7 +203,6 @@ document.querySelectorAll('.scratch-card').forEach(card => {
                     }
                 }
                 
-                // Создаём чат WIN
                 const winChat = {
                     id: 'win_' + Date.now(),
                     name: 'WIN',
@@ -205,20 +217,54 @@ document.querySelectorAll('.scratch-card').forEach(card => {
                 closeBtn.style.display = 'inline-block';
                 lotteryActive = false;
                 
-                setTimeout(() => {
-                    message.textContent = '🎉 Поздравляем! Вы выиграли [LUCK]!';
-                    message.style.color = '#ffd700';
-                }, 5000);
+            } else if (winPLAYER) {
+                // ВЫИГРЫШ PLAYER (все 3)
+                message.textContent = '🎉 ВЫ ВЫИГРАЛИ [PLAYER]! Уведомление отправлено.';
+                message.style.color = '#00e5ff';
+                message.style.textShadow = '0 0 20px #00e5ff';
+                
+                if (!currentUser.lottery.playerWins) currentUser.lottery.playerWins = 0;
+                currentUser.lottery.playerWins++;
+                updateUserData(currentUser);
+                
+                if (!currentUser.notifications) currentUser.notifications = [];
+                currentUser.notifications.push({
+                    id: 'notif_' + Date.now(),
+                    type: 'player_win',
+                    message: '🎮 Вы выиграли роль [PLAYER]! Поздравляем!',
+                    timestamp: Date.now()
+                });
+                updateUserData(currentUser);
+                updateHeader();
+                
+                const director = getUsers().find(u => u.role === 'director');
+                if (director) {
+                    if (!director.notifications) director.notifications = [];
+                    director.notifications.push({
+                        id: 'notif_' + Date.now(),
+                        type: 'lottery_player_win',
+                        message: `🎮 Пользователь "${currentUser.username}" выиграл [PLAYER]!`,
+                        timestamp: Date.now()
+                    });
+                    let users = getUsers();
+                    let idx = users.findIndex(u => u.username === 'Михаил');
+                    if (idx !== -1) {
+                        users[idx] = director;
+                        saveUsers(users);
+                    }
+                }
+                
+                closeBtn.style.display = 'inline-block';
+                lotteryActive = false;
                 
             } else {
-                // ПРОИГРЫШ
-                message.textContent = '😔 Вы проиграли, возможно повезёт позже (новая латерея каждые 2 часа в разделе "латерея")';
+                // ПРОИГРЫШ (не все 3 LUCK или PLAYER)
+                message.textContent = '😔 Вы проиграли. Попробуйте снова через 2 часа!';
                 message.style.color = '#888';
                 closeBtn.style.display = 'inline-block';
                 lotteryActive = false;
             }
             
-            // Удаляем билет
             currentUser.lottery.hasTicket = false;
             updateUserData(currentUser);
         }
@@ -240,7 +286,7 @@ function updateTicketInfo() {
     const status = document.getElementById('ticketStatus');
     
     if (!currentUser.lottery) {
-        currentUser.lottery = { lastTicket: 0, hasTicket: false };
+        currentUser.lottery = { lastTicket: 0, hasTicket: false, luckWins: 0, playerWins: 0 };
     }
     
     if (currentUser.lottery.hasTicket) {
@@ -289,6 +335,10 @@ function openProfileModal(username) {
     document.getElementById('modalEmail').textContent = '📧 ' + (user.email || 'не указан');
     document.getElementById('modal2FA').textContent = '🔐 2FA: ' + (user.twoFactorEnabled ? '✅ Включена' : '❌ Выключена');
     
+    // ===== СТАТИСТИКА ЛОТЕРЕИ В ПРОФИЛЕ =====
+    const stats = user.lottery || { luckWins: 0, playerWins: 0 };
+    document.getElementById('modalLotteryStats').textContent = `🎰 Победы: [LUCK] ${stats.luckWins || 0} | [PLAYER] ${stats.playerWins || 0}`;
+    
     const actions = document.getElementById('modalActions');
     actions.innerHTML = '';
     modal.style.display = 'flex';
@@ -322,12 +372,14 @@ function openNotifModal() {
             const div = document.createElement('div');
             div.className = 'notif-item';
             const isDiscord = n.type === 'discord_link';
-            const isWin = n.type === 'lottery_win';
+            const isPlayer = n.type === 'player_win';
+            const isLuck = n.type === 'lottery_win';
+            const isPlayerWin = n.type === 'lottery_player_win';
             
             let actions = '';
             if (isDiscord) {
                 actions = `<button class="btn-primary" onclick="window.open('https://discord.gg/JDmpxcKYHn','_blank')">🔗 Перейти</button>`;
-            } else if (isWin && currentUser.username === 'Михаил') {
+            } else if ((isLuck || isPlayerWin) && currentUser.username === 'Михаил') {
                 actions = `<button class="btn-success" onclick="openWinChat()">💬 Добавить в чат</button>`;
             }
             
