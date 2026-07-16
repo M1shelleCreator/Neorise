@@ -17,10 +17,6 @@
                     <input type="text" id="regUsername" placeholder="Введите имя" required>
                 </div>
                 <div class="form-group">
-                    <label>Возраст</label>
-                    <input type="number" id="regAge" placeholder="Ваш возраст" required min="13">
-                </div>
-                <div class="form-group">
                     <label>Номер телефона</label>
                     <input type="tel" id="regPhone" placeholder="+7 999 999-99-99" required>
                 </div>
@@ -30,7 +26,17 @@
                 </div>
                 <div class="form-group">
                     <label>Дата рождения</label>
-                    <input type="date" id="regBirthday" required>
+                    <div style="display:flex; gap:8px;">
+                        <select id="regDay" style="flex:1; padding:10px; border-radius:10px; background:#1a1a1a; color:#c0c0c0; border:1px solid #333;">
+                            <option value="">День</option>
+                        </select>
+                        <select id="regMonth" style="flex:1; padding:10px; border-radius:10px; background:#1a1a1a; color:#c0c0c0; border:1px solid #333;">
+                            <option value="">Месяц</option>
+                        </select>
+                        <select id="regYear" style="flex:1; padding:10px; border-radius:10px; background:#1a1a1a; color:#c0c0c0; border:1px solid #333;">
+                            <option value="">Год</option>
+                        </select>
+                    </div>
                 </div>
                 <div class="form-group">
                     <label>Пароль</label>
@@ -48,24 +54,50 @@
     </div>
     <script src="auth.js"></script>
     <script>
+        // ===== ДНИ (1-31) =====
+        const daySelect = document.getElementById('regDay');
+        for (let i = 1; i <= 31; i++) {
+            const opt = document.createElement('option');
+            opt.value = i;
+            opt.textContent = i;
+            daySelect.appendChild(opt);
+        }
+        
+        // ===== МЕСЯЦЫ =====
+        const monthSelect = document.getElementById('regMonth');
+        const months = ['Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь', 
+                        'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь'];
+        months.forEach((m, idx) => {
+            const opt = document.createElement('option');
+            opt.value = idx + 1;
+            opt.textContent = m;
+            monthSelect.appendChild(opt);
+        });
+        
+        // ===== ГОДЫ (2026 → 1970) =====
+        const yearSelect = document.getElementById('regYear');
+        for (let y = 2026; y >= 1970; y--) {
+            const opt = document.createElement('option');
+            opt.value = y;
+            opt.textContent = y;
+            yearSelect.appendChild(opt);
+        }
+        
+        // ===== РЕГИСТРАЦИЯ =====
         document.getElementById('registerForm').onsubmit = function(e) {
             e.preventDefault();
             const username = document.getElementById('regUsername').value.trim();
-            const age = document.getElementById('regAge').value;
             const phone = document.getElementById('regPhone').value.trim();
             const email = document.getElementById('regEmail').value.trim();
-            const birthday = document.getElementById('regBirthday').value;
+            const day = document.getElementById('regDay').value;
+            const month = document.getElementById('regMonth').value;
+            const year = document.getElementById('regYear').value;
             const password = document.getElementById('regPassword').value;
             const confirm = document.getElementById('regConfirm').value;
             const msg = document.getElementById('regMessage');
             
             if (username.length < 2) {
                 msg.innerHTML = '❌ Имя минимум 2 символа';
-                msg.style.color = '#ff4444';
-                return;
-            }
-            if (!age || age < 13) {
-                msg.innerHTML = '❌ Вам должно быть минимум 13 лет';
                 msg.style.color = '#ff4444';
                 return;
             }
@@ -79,8 +111,8 @@
                 msg.style.color = '#ff4444';
                 return;
             }
-            if (!birthday) {
-                msg.innerHTML = '❌ Укажите дату рождения';
+            if (!day || !month || !year) {
+                msg.innerHTML = '❌ Укажите полную дату рождения';
                 msg.style.color = '#ff4444';
                 return;
             }
@@ -94,6 +126,13 @@
                 msg.style.color = '#ff4444';
                 return;
             }
+            
+            const monthNames = ['Января', 'Февраля', 'Марта', 'Апреля', 'Мая', 'Июня', 
+                                'Июля', 'Августа', 'Сентября', 'Октября', 'Ноября', 'Декабря'];
+            const birthday = day + ' ' + monthNames[month - 1] + ' ' + year;
+            
+            // Возраст вычисляем автоматически
+            const age = new Date().getFullYear() - year;
             
             const result = registerUser(username, age, phone, email, birthday, password);
             if (result.success) {
