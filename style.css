@@ -628,3 +628,81 @@ body {
     font-size: 28px;
     font-weight: bold;
 }
+/* ===== СТАТИСТИКА ЛОТЕРЕИ В ПРОФИЛЕ ===== */
+#modalLotteryStats {
+    color: #ffd700;
+    font-weight: bold;
+    font-size: 14px;
+    text-shadow: 0 0 10px rgba(255, 215, 0, 0.3);
+    margin-top: 8px;
+}
+
+/* ===== СТИЛИ ДЛЯ КАРТ ЛОТЕРЕИ ===== */
+.scratch-result.luck-rainbow {
+    background: linear-gradient(90deg, #ff0000, #ff8800, #ffff00, #00ff00, #0088ff, #8800ff, #ff0000);
+    background-size: 300% 100%;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: rainbowMove 2s linear infinite;
+    font-size: 28px;
+    font-weight: bold;
+}
+
+@keyframes rainbowMove {
+    0% { background-position: 0% 50%; }
+    100% { background-position: 300% 50%; }
+}
+
+.scratch-result.lose-red {
+    color: #ff4444;
+    text-shadow: 0 0 20px #ff4444;
+    font-size: 28px;
+    font-weight: bold;
+}
+
+.scratch-card .scratch-cover.silver {
+    background: linear-gradient(145deg, #c0c0c0, #8a8a8a);
+    color: #666;
+    text-shadow: 0 0 10px rgba(255,255,255,0.15);
+    font-size: 28px;
+    font-weight: bold;
+}
+/* ===== СТАТИСТИКА ЛОТЕРЕИ В ПРОФИЛЕ ===== */
+#modalLotteryStats {
+    color: #ffd700;
+    font-weight: bold;
+    font-size: 14px;
+    text-shadow: 0 0 10px rgba(255, 215, 0, 0.3);
+    margin-top: 8px;
+}
+
+/* ===== СТИЛИ ДЛЯ КАРТ ЛОТЕРЕИ ===== */
+.scratch-result.luck-rainbow {
+    background: linear-gradient(90deg, #ff0000, #ff8800, #ffff00, #00ff00, #0088ff, #8800ff, #ff0000);
+    background-size: 300% 100%;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: rainbowMove 2s linear infinite;
+    font-size: 28px;
+    font-weight: bold;
+}
+
+@keyframes rainbowMove {
+    0% { background-position: 0% 50%; }
+    100% { background-position: 300% 50%; }
+}
+
+.scratch-result.lose-red {
+    color: #ff4444;
+    text-shadow: 0 0 20px #ff4444;
+    font-size: 28px;
+    font-weight: bold;
+}
+
+.scratch-card .scratch-cover.silver {
+    background: linear-gradient(145deg, #c0c0c0, #8a8a8a);
+    color: #666;
+    text-shadow: 0 0 10px rgba(255,255,255,0.15);
+    font-size: 28px;
+    font-weight: bold;
+}
